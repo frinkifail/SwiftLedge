@@ -1,3 +1,5 @@
+import updateRun from './running';
+import slide from './sliding';
 import wallclimb from './wallclimb';
 const plr = game.GetService('Players').GetPlayerFromCharacter(script.Parent!.Parent)!;
 const hum = <Humanoid>script.Parent!.Parent!.FindFirstChild('Humanoid')!;
@@ -13,6 +15,10 @@ const hrp = <Part>script.Parent!.Parent!.FindFirstChild('HumanoidRootPart')!;
 
 plr.CameraMode = Enum.CameraMode.LockFirstPerson;
 
+game.GetService("RunService").Heartbeat.Connect((dt) => {
+    updateRun(<ExtendedPlayer>plr, hum, cam, dt);
+})
+
 game.GetService("UserInputService").InputBegan.Connect((input, gpe) => {
     if (gpe) return;
     switch (input.KeyCode) {
@@ -20,7 +26,7 @@ game.GetService("UserInputService").InputBegan.Connect((input, gpe) => {
             wallclimb(cam, hrp);
             break;
         case Enum.KeyCode.LeftShift:
-            // TODO: implement sliding
+            slide(hrp, hum);
             break;
     }
 })
