@@ -2,7 +2,7 @@ import config from "shared/config";
 import states from "shared/states";
 export default function slide(hrp: Part, hum: Humanoid, cam: Camera) {
     const runspeed = hum.WalkSpeed;
-    if (states.sliding) return;
+    if (states.sliding || states.climbing) return;
     const attachment = new Instance("Attachment", hrp);
     const force = new Instance("VectorForce");
     force.Attachment0 = attachment;

@@ -1,4 +1,5 @@
 const states = {
-    sliding: false
+    sliding: false,
+    climbing: false
 };
 export default states;

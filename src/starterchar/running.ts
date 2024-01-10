@@ -1,10 +1,12 @@
 ///<reference path="../types.d.ts" />
 import config from "shared/config";
+import states from "shared/states";
 
 export default function updateRun(plr: ExtendedPlayer, hum: Humanoid, cam: Camera, dt: number) {
     const runmeter = <Frame>plr.PlayerGui.FindFirstChild('HUD')?.FindFirstChild('RunMeter');
     const progress = <TextLabel>runmeter.FindFirstChild("Progress");
     const runicon = <ImageLabel>runmeter.Parent!.FindFirstChild("RunIcon")
+    if (states.climbing || states.sliding) return;
     progress.TweenSize(
         UDim2.fromScale(
             (hum.WalkSpeed - config.minws) 
