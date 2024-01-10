@@ -1,0 +1,125 @@
+Init:
+local plr = game.Players:GetPlayerFromCharacter(script.Parent)
+local hum: Humanoid = script.Parent.Humanoid
+local cam = workspace.CurrentCamera
+local hrp: Part = script.Parent.HumanoidRootPart
+local modules = {
+	wallclimb = require(script.WallClimbing),
+	slide = require(script.Sliding)
+}
+
+plr.CameraMode = Enum.CameraMode.LockFirstPerson
+
+game.UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessedEvent: boolean) 
+	if gameProcessedEvent then return end
+	if input.KeyCode == Enum.KeyCode.Space then
+		modules.wallclimb(plr, hum, cam, hrp)
+	elseif input.KeyCode == Enum.KeyCode.LeftShift then
+		modules.slide(hrp, cam, hum)
+	end
+end)
+wallclimb:
+return function(plr: Player, hum: Humanoid, cam: Camera, hrp: Part) 
+	local raycast = workspace:Raycast(
+		cam.CFrame.Position + cam.CFrame.LookVector, 
+		cam.CFrame.LookVector
+	)
+	if raycast == nil then return end
+	local inst: Part = raycast.Instance
+	--print(inst.Name)
+	if inst.Size.X > inst.Size.Y 
+		or inst.Name == "Handle" 
+		or inst.Name == "Head"
+		or inst.Name == "HumanoidRootPart"
+		or inst.Name == "UpperTorso"
+		or inst.Name == "LowerTorso"
+	then
+		--print("nuh uh")
+		return
+	end
+	--print("apply vel")
+	hrp.AssemblyLinearVelocity = Vector3.new(0, 100)
+end
+running:
+local plr = game.Players:GetPlayerFromCharacter(script.Parent)
+local hum: Humanoid = script.Parent.Humanoid
+local config = require(game.ReplicatedFirst["global config"])
+local camera = workspace.CurrentCamera
+local runmeter = plr.PlayerGui.HUD.RunMeter
+
+game["Run Service"].Heartbeat:Connect(function(deltaTime: number) 
+	--print(hum.MoveDirection, hum.WalkSpeed)
+	runmeter.Progress:TweenSize(
+		UDim2.fromScale((hum.WalkSpeed - config.minws) / (config.maxws - config.minws), 1),
+		Enum.EasingDirection.InOut,
+		Enum.EasingStyle.Quad,
+		deltaTime,
+		true
+	)
+	if (runmeter.Progress.Size.Width.Scale <= 0 or runmeter.Progress.Size.Width.Scale >= 1) then
+		runmeter.Visible = false
+	else
+		runmeter.Visible = true
+	end
+	if not (hum.MoveDirection == Vector3.zero) then
+		if hum.WalkSpeed < config.maxws then
+			hum.WalkSpeed += deltaTime * config.accelerationFactor
+		end
+		if camera.FieldOfView < config.maxFov then
+			camera.FieldOfView += config.camAFactor
+		end
+	else
+		if hum.WalkSpeed > config.minws then
+			hum.WalkSpeed -= config.decelerationFactor
+		end
+		if camera.FieldOfView > config.minFov then
+			camera.FieldOfView -= config.camDFactor
+		end
+	end
+end)
+global config:
+return {
+	maxws = 36,
+	minws = 16,
+	accelerationFactor = 7,
+	decelerationFactor = 0.6,
+	minFov = 70,
+	maxFov = 105,
+	camAFactor = 0.62,
+	camDFactor = 0.8,
+	slideDuration = 0.6,
+	slideMultiplier = 10
+}
+sliding:
+return function (hrp: Part, camera: Camera, hum: Humanoid)
+	local config = require(game.ReplicatedFirst["global config"])
+	local states = require(game.ReplicatedFirst["global states"])
+	local runspeed = hum.WalkSpeed
+	if states:GetState("sliding") then return end
+	local attachment = Instance.new("Attachment", hrp)
+	local force = Instance.new("VectorForce")
+	force.Attachment0 = attachment
+	local lookvector = Vector3.new(camera.CFrame.LookVector.X * config.slideMultiplier, 0, camera.CFrame.LookVector.Z * config.slideMultiplier)
+	force.Force = lookvector
+	--hum.PlatformStand = true
+	force.Parent = hrp
+	states:SetState("sliding", true)
+	hum.WalkSpeed = 0
+	wait(config.slideDuration)
+	--hum.PlatformStand = false
+	hum.WalkSpeed = runspeed
+	force:Destroy()
+	attachment:Destroy()
+	states:SetState("sliding", false)
+end
+states:
+local states = {}
+
+function states:SetState(state: string, value: any)
+	self[state] = value
+end
+function states:GetState(state: string)
+	return self[state]
+end
+
+return states
