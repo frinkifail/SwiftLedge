@@ -1,4 +1,4 @@
-import { wallclimb } from './wallclimb';
+import wallclimb from './wallclimb';
 const plr = game.GetService('Players').GetPlayerFromCharacter(script.Parent!.Parent)!;
 const hum = <Humanoid>script.Parent!.Parent!.FindFirstChild('Humanoid')!;
 const cam = game.Workspace.CurrentCamera!;

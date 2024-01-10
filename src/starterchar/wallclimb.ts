@@ -1,4 +1,4 @@
-export function wallclimb(cam: Camera, hrp: Part) {
+export default function wallclimb(cam: Camera, hrp: Part) {
     const lookvector = cam.CFrame.LookVector
     const raycast = game.Workspace.Raycast(cam.CFrame.Position.add(lookvector), lookvector)!
     const inst = raycast.Instance
