@@ -1,3 +1,4 @@
+///<reference path="../types.d.ts" />
 import updateRun from './running';
 import slide from './sliding';
 import wallclimb from './wallclimb';
@@ -26,7 +27,7 @@ game.GetService("UserInputService").InputBegan.Connect((input, gpe) => {
             wallclimb(cam, hrp);
             break;
         case Enum.KeyCode.LeftShift:
-            slide(hrp, hum);
+            slide(hrp, hum, cam);
             break;
     }
 })

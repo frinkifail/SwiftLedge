@@ -1,8 +1,10 @@
+///<reference path="../types.d.ts" />
 import config from "shared/config";
 
 export default function updateRun(plr: ExtendedPlayer, hum: Humanoid, cam: Camera, dt: number) {
     const runmeter = <Frame>plr.PlayerGui.FindFirstChild('HUD')?.FindFirstChild('RunMeter');
     const progress = <TextLabel>runmeter.FindFirstChild("Progress");
+    const runicon = <ImageLabel>runmeter.Parent!.FindFirstChild("RunIcon")
     progress.TweenSize(
         UDim2.fromScale(
             (hum.WalkSpeed - config.minws) 
@@ -15,9 +17,15 @@ export default function updateRun(plr: ExtendedPlayer, hum: Humanoid, cam: Camer
         true
     );
     const wscale = progress.Size.Width.Scale;
-    if (wscale <= 0 || wscale >= 1) runmeter.Visible = false
-    else runmeter.Visible = true
-    if (hum.MoveDirection == Vector3.zero) {
+    if (wscale <= 0 || wscale >= 1) {
+        runmeter.Visible = false;
+        if (wscale >= 1) runicon.Image = 'http://www.roblox.com/asset/?id=6026568215';
+    }
+    else {
+        runmeter.Visible = true;
+        runicon.Image = 'http://www.roblox.com/asset/?id=6026568199';
+    }
+    if (hum.MoveDirection === Vector3.zero) {
         if (hum.WalkSpeed > config.minws) {
 			hum.WalkSpeed -= config.dfactor * dt
         }

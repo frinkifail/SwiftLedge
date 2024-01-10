@@ -1,11 +1,12 @@
 import config from "shared/config";
 import states from "shared/states";
-export default function slide(hrp: Part, hum: Humanoid) {
+export default function slide(hrp: Part, hum: Humanoid, cam: Camera) {
     const runspeed = hum.WalkSpeed;
     if (states.sliding) return;
     const attachment = new Instance("Attachment", hrp);
     const force = new Instance("VectorForce");
     force.Attachment0 = attachment;
+    force.Force = new Vector3(cam.CFrame.X, 0, cam.CFrame.Y).mul(config.slideMultiplier);
     force.Parent = hrp;
     states.sliding = true;
     hum.WalkSpeed = 0;
