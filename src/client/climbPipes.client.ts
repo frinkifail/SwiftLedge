@@ -1,10 +1,11 @@
 import states from "shared/states";
+import { ProximityPromptService } from '@rbxts/services';
 
-game.GetService('ProximityPromptService').PromptTriggered.Connect((prompt, plr) => {
+ProximityPromptService.PromptTriggered.Connect((prompt, plr) => {
     if (prompt.ObjectText !== "Pipe") return;
     if (states.climbing || states.sliding) return;
     states.climbing = true
-    const hum = <Humanoid>plr.Character!.FindFirstChild("Humanoid")
+    const hum = plr.Character!.Humanoid;
     const runspeed = hum.WalkSpeed;
     hum.WalkSpeed = 0;
     const uis = game.GetService("UserInputService")
