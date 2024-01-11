@@ -6,7 +6,7 @@ export default function updateRun(plr: Player, hum: Humanoid, cam: Camera, dt: n
     // const runmeter = <Frame>plr.PlayerGui.FindFirstChild('HUD')?.FindFirstChild('RunMeter');
     const runmeter = plr.PlayerGui.HUD.RunMeter;
     const progress = runmeter.Progress;
-    const runicon = runmeter.Parent.RunIcon
+    const runicon = runmeter.Parent.RunIcon;
     if (states.climbing || states.sliding) return;
     progress.TweenSize(
         UDim2.fromScale(
@@ -28,7 +28,7 @@ export default function updateRun(plr: Player, hum: Humanoid, cam: Camera, dt: n
         runmeter.Visible = true;
         runicon.Image = 'http://www.roblox.com/asset/?id=6026568199';
     }
-    if (hum.MoveDirection === Vector3.zero) {
+    if (hum.MoveDirection.Magnitude < 1) {
         if (hum.WalkSpeed > config.minws) {
 			hum.WalkSpeed -= config.dfactor * dt
         }
