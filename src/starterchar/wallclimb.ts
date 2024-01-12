@@ -2,7 +2,8 @@ import { Workspace } from "@rbxts/services";
 import states from "shared/states";
 
 export default function wallclimb(cam: Camera, hrp: Part) {
-    if (states.sliding || states.climbing) return;
+    if (states.sliding || states.climbing || states.wallclimbCount > 0) return;
+    states.wallclimbCount += 1
     const raycastParams = new RaycastParams();
 	raycastParams.FilterType = Enum.RaycastFilterType.Exclude
 	raycastParams.FilterDescendantsInstances = [hrp.Parent!];
@@ -20,6 +21,6 @@ export default function wallclimb(cam: Camera, hrp: Part) {
         "UpperTorso",
         "LowerTorso"
     ])
-    if (inst.Size.X > inst.Size.Y || notAllowed.has(inst.Name)) return;
+    if (inst.Size.X > inst.Size.Y || notAllowed.has(inst.Name) || raycast.Distance > 3.5) return;
     hrp.AssemblyLinearVelocity = new Vector3(0, 100);
 }

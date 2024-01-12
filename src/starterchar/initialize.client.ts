@@ -3,6 +3,7 @@ import { RunService, UserInputService, Workspace, Players } from '@rbxts/service
 import updateRun from './running';
 import slide from './sliding';
 import wallclimb from './wallclimb';
+import states from 'shared/states';
 
 const plr = Players.GetPlayerFromCharacter(script.Parent!.Parent)!;
 const hum = plr.Character!.Humanoid;
@@ -12,6 +13,7 @@ const hrp = <Part>script.Parent!.Parent!.FindFirstChild('HumanoidRootPart')!; //
 plr.CameraMode = Enum.CameraMode.LockFirstPerson;
 
 RunService.Heartbeat.Connect((dt) => {
+    if (hum.FloorMaterial !== Enum.Material.Air) states.wallclimbCount = 0
     updateRun(plr, hum, cam, dt);
 })
 

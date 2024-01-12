@@ -36,23 +36,25 @@ ProximityPromptService.PromptTriggered.Connect((prompt, plr) => {
     visualizer.CanCollide = false;
     pos0.CanCollide = false;
     plr.Character!.MoveTo(pos2);
-    ContextActionService.BindAction('get off pipe', (name) => {
+    const getOffPipe = (name: string) => {
         states.climbing = false;
         hum.WalkSpeed = runspeed;
         Workspace.Gravity = grav;
         ContextActionService.UnbindAction(name);
-    }, true, Enum.KeyCode.Space)
+    }
+    ContextActionService.BindAction('get off pipe', getOffPipe, true, Enum.KeyCode.Space)
     while (states.climbing) {
         if (UserInputService.IsKeyDown("W")) {
             const vec = pos1.Position.add(new Vector3(0, 1));
             if (vec.Y > pos0.Position.Y) {
-                return;
+                getOffPipe('get off pipe')
             }
             plr.Character!.MoveTo(vec);
         } else if (UserInputService.IsKeyDown("S")) {
             const vec = pos1.Position.add(new Vector3(0, -1));
             if (pos1.Position.Y < getBottom()) {
-                return;
+                // return;
+                getOffPipe('get off pipe')
             }
             plr.Character!.MoveTo(vec);
         }
